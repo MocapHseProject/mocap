@@ -3,6 +3,13 @@ package main.java.Render;
 import com.jogamp.opengl.*;
 import com.jogamp.newt.event.*;
 import com.jogamp.newt.opengl.GLWindow;
+import com.jogamp.opengl.util.Animator;
+import main.java.Render.Buffer.Buffer;
+import main.java.Render.Buffer.VertexArray;
+import main.java.Camera.Camera;
+import main.java.Render.Primitive.BasicPrimitive;
+import main.java.Render.Primitive.Primitive;
+import main.java.Render.Shader.Shader;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -44,9 +51,12 @@ public class Render implements GLEventListener, KeyListener, MouseListener {
     private int height;                                  // Height of rendering window
     private float time;                                  // Global time in seconds
     private long startTime;                              // Window creating time in milliseconds
+    private Camera camera;                               // Main camera
     private Mouse mouse = null;                          // Mouse instance
     private GLWindow window = null;                      // OpenGL window instance
+    private Animator animator = null;                    // Frame animator
     private ArrayList<Buffer> buffers = null;            // Storage of OpenGL buffers
+    private ArrayList<Primitive> primitives = null;      // Storage of primitives
     private TreeMap<Character, ButtonState> keys = null; // Keyboard buttons
 
     /**
@@ -59,6 +69,10 @@ public class Render implements GLEventListener, KeyListener, MouseListener {
         time = 0;
         width = 800;
         height = 600;
+        mouse = new Mouse();
+        buffers = new ArrayList<>();
+        primitives = new ArrayList<>();
+        camera = new Camera(width, height);
         GLProfile.initSingleton();
         if (!GLProfile.isInitialized()) {
             throw new RuntimeException("Error on initializing OpenGL...");
@@ -75,10 +89,22 @@ public class Render implements GLEventListener, KeyListener, MouseListener {
             window.setVisible(true);
 
             window.addGLEventListener(this);
+            // window.addKeyListener(this);
+            // window.addMouseListener(this);
+
+            try {
+                animator = new Animator(window);
+                animator.start();
+            } catch (
+                    Exception e) {
+                System.err.println("Error in animator creation...");
+                throw new RuntimeException(e);
+            }
 
             window.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowDestroyed(WindowEvent e) {
+                    animator.stop();
                     System.exit(1);
                 }
             });
@@ -112,8 +138,29 @@ public class Render implements GLEventListener, KeyListener, MouseListener {
      */
     @Override
     public void init(GLAutoDrawable drawable) {
+        GL3 gl = drawable.getGL().getGL3();
+
+        System.out.println("OpenGL: " + gl.glGetString(GL3.GL_VERSION));
+        System.out.println("Shader language: " + gl.glGetString(gl.GL_SHADING_LANGUAGE_VERSION));
+
+        time = System.currentTimeMillis();
+
+        gl.glEnable(gl.GL_PRIMITIVE_RESTART);
+        gl.glPrimitiveRestartIndex(-1);
+
         gl.glViewport(0, 0, width, height);
         gl.glClearColor(0, 0, 0, 1);
+
+        // МОЙ ПРИМЕР ТРЕУГОЛЬНИКА
+        {
+            float[] vertexBufferData = {
+                    /* position */ -1F, -1F, -10F, /* color */ 0F, 0.6F, 0.9F, /* normal */ 0F, 0F, 1F,
+                    /* position */ 1F, -1F, -10F,  /* color */ 0.3F, 0.3F, 0.7F, /* normal */ 0F, 0F, 1F,
+                    /* position */ 0F, 2F, -11F,  /* color */ 0.7F, 0.6F, 0.8F, /* normal */ 0F, 0F, 1F
+            };
+            int[] indexBufferData = {0, 1, 2};
+            primitives.add(new BasicPrimitive(gl, vertexBufferData, "v3v3v3", indexBufferData, "./src/main/glsl/Default"));
+        }
     } // End of 'init' function
 
     /**
@@ -125,6 +172,9 @@ public class Render implements GLEventListener, KeyListener, MouseListener {
     @Override
     public void display(GLAutoDrawable drawable) {
         time = (float) (System.currentTimeMillis() - startTime) / 1000.0F;
+        // Not working on macOS
+        //mouse.x = MouseInfo.getPointerInfo().getLocation().x;
+        //mouse.y = MouseInfo.getPointerInfo().getLocation().y;
 
         GL3 gl = drawable.getGL().getGL3();
 
@@ -133,6 +183,10 @@ public class Render implements GLEventListener, KeyListener, MouseListener {
         gl.glEnable(gl.GL_DEPTH_TEST);
 
         gl.glClearColor(0, 0, 0, 1);
+        for (Primitive primitive : primitives) {
+            primitive.render(gl, camera, VertexArray.RenderType.TRIANGLES);
+        }
+
 
         gl.glFinish();
         gl.glDisable(gl.GL_DEPTH_TEST);
@@ -166,6 +220,12 @@ public class Render implements GLEventListener, KeyListener, MouseListener {
     @Override
     public void dispose(GLAutoDrawable drawable) {
         GL3 gl = drawable.getGL().getGL3();
+        for (Buffer buffer : buffers) {
+            buffer.destroy(gl);
+        }
+        for (Primitive primitive : primitives) {
+            primitive.destroy(gl);
+        }
         quit();
     } // End of 'dispose' function
 
