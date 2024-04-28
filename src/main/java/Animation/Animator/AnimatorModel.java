@@ -1,3 +1,4 @@
+/*
 package main.java.Animation.Animator;
 
 import com.jogamp.opengl.GL3;
@@ -45,20 +46,6 @@ public class AnimatorModel {
         animator.update();
     }
 
-    public Matrix[] getJointTransforms() {
-        Matrix[] jointMatrices = new Matrix[jointCount];
-        addJointsToArray(rootJoint, jointMatrices);
-        return jointMatrices;
-    }
-
-    public Texture getTexture() {
-        return texture;
-    }
-
-    public Joint getRootJoint() {
-        return rootJoint;
-    }
-
     private void addJointsToArray(@NotNull Joint headJoint, Matrix @NotNull [] jointMatrices) {
         jointMatrices[headJoint.index] = headJoint.getAnimTrans();
         for (Joint childJoint : headJoint.jointList) {
@@ -67,3 +54,4 @@ public class AnimatorModel {
     }
 
 }
+*/

@@ -1,3 +1,4 @@
+/*
 package main.java.Animation.Animator;
 
 import main.java.MyMath.Matrix;
@@ -87,20 +88,5 @@ public class Animator {
         return currentPose;
     }
 
-    public void update() {
-        if (currentAnimation == null) {
-            return;
-        }
-        increaseAnimTime();
-        Map<String, Matrix> currentPose = calcCurrentAnimPos();
-        applyPosToJoints(currentPose, model.getRootJoint(), new Matrix());
-    }
-
-    private void increaseAnimTime() {
-        animationTime += deltaTime;
-        //animationTime += DisplayManager.getFrameTime();
-        if (animationTime > currentAnimation.getLength()) {
-            this.animationTime %= currentAnimation.getLength();
-        }
-    }
 }
+*/

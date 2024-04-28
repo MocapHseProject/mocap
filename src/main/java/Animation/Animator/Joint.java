@@ -1,3 +1,4 @@
+/*
 package main.java.Animation.Animator;
 
 import main.java.MyMath.Matrix;
@@ -64,3 +65,4 @@ public class Joint {
         return invBindTrans;
     }
 }
+*/
