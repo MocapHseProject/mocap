@@ -439,4 +439,110 @@ static __device__ d_vec RGB2LAB(const DWORD D, const d_vec white_point) {
   return RGB2LAB(C, white_point);
 } /* End of 'RGB2LAB' function */
 
+/* CUDA calculation for a picture filtering function.
+ * ARGUMENTS:
+ *   - source buffer for CUDA (texture data):
+ *       DWORD *Tex_D;
+ *   - width and height of texture:
+ *       const int w, h;
+ * RETURS: None.
+ */
+__global__ void RunCuda_Blur(DWORD *Tex_D, const int w, const int h);
+
+/* CUDA calculation for a picture filtering function.
+ * ARGUMENTS:
+ *   - source buffer for CUDA (texture data):
+ *       DWORD *Tex_D;
+ *   - source buffer for CUDA (colors data):
+ *       DWORD *Data_D;
+ *   - texture size:
+ *       const int size_0;
+ *   - width and height of texture:
+ *       const int w, h;
+ *   - number of ideal colors:
+ *       const int n;
+ * RETURS: None.
+ */
+__global__ void RunCuda_RGB(DWORD *Tex_D, DWORD *Data_D, const int size_0,
+                            const int w, const int h, const int n);
+
+/* CUDA calculation for a picture filtering function.
+ * ARGUMENTS:
+ *   - source buffer for CUDA (texture data):
+ *       DWORD *Tex_D;
+ *   - source buffer for CUDA (colors data):
+ *       DWORD *Data_D;
+ *   - texture size:
+ *       const int size_0;
+ *   - width and height of texture:
+ *       const int w, h;
+ *   - number of ideal colors:
+ *       const int n;
+ * RETURS: None.
+ */
+__global__ void RunCuda_HSV(DWORD *Tex_D, DWORD *Data_D, const int size_0,
+                            const int w, const int h, const int n);
+
+/* CUDA calculation for a picture filtering function.
+ * ARGUMENTS:
+ *   - source buffer for CUDA (texture data):
+ *       DWORD *Tex_D;
+ *   - source buffer for CUDA (colors data):
+ *       DWORD *Data_D;
+ *   - texture size:
+ *       const int size_0;
+ *   - width and height of texture:
+ *       const int w, h;
+ *   - number of ideal colors:
+ *       const int n;
+ * RETURS: None.
+ */
+__global__ void RunCuda_LAB(DWORD *Tex_D, DWORD *Data_D, const int size_0,
+                            const int w, const int h, const int n);
+
+/* CUDA calculation for joint's position finding function.
+ * ARGUMENTS:
+ *   - source buffer for CUDA (lines data: normal, one point on the plane):
+ *       DWORD *Data_D;
+ *   - number of conncted devices:
+ *       const int NumOfDevices;
+ *   - number of ideal colors:
+ *       const int n;
+ * RETURS: None.
+ */
+__global__ void RunCuda_2(DWORD *Data_D, const int NumOfDevices, const int n);
+
+/* CUDA response for textures bluring function.
+ * ARGUMENTS:
+ *   - vector of device biffers:
+ *       std::vector<std::pair<int, DWORD *>> DeviceBuffers;
+ *   - offsets for device buffers:
+ *       std::map<std::string, int> Offsets;
+ * RETURNS: None.
+ */
+void BlurResponse(std::vector<std::pair<int, DWORD *>> DeviceBuffers,
+                  std::map<std::string, int> Offsets);
+
+/* CUDA response for textures parcing function.
+ * ARGUMENTS:
+ *   - vector of device biffers:
+ *       std::vector<std::pair<int, DWORD *>> DeviceBuffers;
+ *   - offsets for device buffers:
+ *       std::map<std::string, int> Offsets;
+ * RETURNS: None.
+ */
+void TexturesResponse(std::vector<std::pair<int, DWORD *>> DeviceBuffers,
+                      std::map<std::string, int> Offsets);
+
+/* CUDA response for finding joints response function (for 2 or nore devices).
+ * ARGUMENTS:
+ *   - vector of device biffers:
+ *       std::vector<std::pair<int, DWORD *>> DeviceBuffers;
+ *   - offsets for device buffers:
+ *       std::map<std::string, int> Offsets;
+ * RETURNS: None.
+ */
+void JointsResponse(std::vector<std::pair<int, DWORD *>> DeviceBuffers,
+                    std::map<std::string, int> Offsets);
+
 #endif /* __cuda_test_cuh_ */
