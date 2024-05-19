@@ -182,6 +182,31 @@ void BlurResponse(std::vector<std::pair<int, DWORD *>> DeviceBuffers,
                                          Offsets["h"]);
 } /* End of 'Blur' function */
 
+/* CUDA response for textures parcing function.
+ * ARGUMENTS:
+ *   - vector of device biffers:
+ *       std::vector<std::pair<int, DWORD *>> DeviceBuffers;
+ *   - offsets for device buffers:
+ *       std::map<std::string, int> Offsets;
+ * RETURNS: None.
+ */
+void TexturesResponse(std::vector<std::pair<int, DWORD *>> DeviceBuffers,
+                      std::map<std::string, int> Offsets) {
+  int x_threads = DeviceBuffers[0].first / 1024 + 1,
+      y_threads = h_min(1024, DeviceBuffers[0].first);
+  if (Offsets["color"] == 0)
+    RunCuda_RGB<<<x_threads, y_threads>>>(
+        DeviceBuffers[0].second, DeviceBuffers[1].second,
+        DeviceBuffers[0].first, Offsets["w"], Offsets["h"], Offsets["n"]);
+  if (Offsets["color"] == 1)
+    RunCuda_HSV<<<x_threads, y_threads>>>(
+        DeviceBuffers[0].second, DeviceBuffers[1].second,
+        DeviceBuffers[0].first, Offsets["w"], Offsets["h"], Offsets["n"]);
+  if (Offsets["color"] == 2)
+    RunCuda_LAB<<<x_threads, y_threads>>>(
+        DeviceBuffers[0].second, DeviceBuffers[1].second,
+        DeviceBuffers[0].first, Offsets["w"], Offsets["h"], Offsets["n"]);
+} /* End of 'TexturesResponse' function */
 
 /* CUDA response for textures parcing function.
  * ARGUMENTS:
