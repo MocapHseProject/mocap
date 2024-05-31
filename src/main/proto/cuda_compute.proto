@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package cuda_compute;
+option java_package = "main.java.CudaCompute";
+
+message CudaComputeRequest {
+  repeated uint32 texture_data = 1;
+  repeated uint32 data = 2;
+}
+
+message CudaComputeResponse {
+  repeated uint32 texture_data = 1;
+  repeated uint32 data = 2;
+}
+
+service CudaComputeService {
+  rpc CudaCompute (CudaComputeRequest) returns (CudaComputeResponse);
+}
