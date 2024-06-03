@@ -19,16 +19,10 @@ public:
   __device__ d_vec(void) {} /* End of 'vec' function */
 
   /* Constructor function.
-   * ARGUMENTS:
-   *   - vector parameter:
-   *       const float a;
    */
   __device__ d_vec(const float a) { x = y = z = a; } /* End of 'vec' function */
 
   /* Constructor function.
-   * ARGUMENTS:
-   *   - vector parameters:
-   *       const float q, w, e;
    */
   __device__ d_vec(const float q, const float w, const float e) {
     x = q;
@@ -37,32 +31,18 @@ public:
   } /* End of 'vec' function */
 
   /* Negative vector function.
-   * ARGUMENTS:
-   *   - second vector:
-   *       const d_vec &V;
-   * RETURNS:
-   *   (d_vec) - negative vector.
    */
   __device__ d_vec operator-(const d_vec &V) const {
     return d_vec(x - V.x, y - V.y, z - V.z);
   } /* End of 'operator-' function */
 
   /* Add vector function.
-   * ARGUMENTS:
-   *   - second vector:
-   *       const d_vec &V;
-   * RETURNS:
-   *   (d_vec) - result vector.
    */
   __device__ d_vec operator+(const d_vec &V) const {
     return d_vec(x + V.x, y + V.y, z + V.z);
   } /* End of 'operator+' function */
 
   /* Add to vector function.
-   * ARGUMENTS:
-   *   - second vector:
-   *       const d_vec &V;
-   * RETURNS: None
    */
   __device__ void operator+=(const d_vec &V) {
     x += V.x;
@@ -71,10 +51,6 @@ public:
   } /* End of 'operator+=' function */
 
   /* Subtruct to vector function.
-   * ARGUMENTS:
-   *   - second vector:
-   *       const d_vec &V;
-   * RETURNS: None
    */
   __device__ void operator-=(const d_vec &V) {
     x -= V.x;
@@ -83,10 +59,6 @@ public:
   } /* End of 'operator-=' function */
 
   /* Dividion by number function.
-   * ARGUMENTS:
-   *   - number:
-   *       const float a;
-   * RETURNS: None
    */
   __device__ void operator/=(const float a) {
     x /= a;
@@ -95,10 +67,6 @@ public:
   } /* End of 'operator/=' function */
 
   /* Multiplication by number function.
-   * ARGUMENTS:
-   *   - number:
-   *       const float a;
-   * RETURNS: None
    */
   __device__ void operator*=(const float a) {
     x *= a;
@@ -107,51 +75,30 @@ public:
   } /* End of 'operator*=' function */
 
   /* Dot product of two vectors function.
-   * ARGUMENTS:
-   *   - second vector in dot product:
-   *       const d_vec &V;
-   * RETURNS:
-   *   (float) - result of dot product.
    */
   __device__ float operator&(const d_vec &V) const {
     return x * V.x + y * V.y + z * V.z;
   } /* End of 'operator&' function */
 
   /* Get vector length function.
-   * ARGUMENTS: None.
-   * RETURNS:
-   *   (float) - vector length.
    */
   __device__ float operator!(void) const {
     return sqrt(x * x + y * y + z * z);
   } /* End of 'operator!' function */
 
   /* Multiply of vector and number function.
-   * ARGUMENTS:
-   *   - number to be multiplied:
-   *       const float N;
-   * RETURNS:
-   *   (vec<Type>) result of multiplication.
    */
   __device__ d_vec operator*(const float N) const {
     return d_vec(x * N, y * N, z * N);
   } /* End of 'operator*' function */
 
   /* Divide of vector and number function.
-   * ARGUMENTS:
-   *   - number to be divided:
-   *       const float N;
-   * RETURNS:
-   *   (vec<Type>) result of multiplication.
    */
   __device__ d_vec operator/(const float N) const {
     return d_vec(x / N, y / N, z / N);
   } /* End of 'operator/' function */
 
   /* Self normalize vector function.
-   * ARGUMENTS: None.
-   * RETURNS:
-   *   (vec<Type> &) self reference.
    */
   __device__ d_vec &Normalize(void) {
     const float n(sqrt(x * x + y * y + z * z));
@@ -164,9 +111,6 @@ public:
   } /* End of 'Normalize' function */
 
   /* Normalize vector function.
-   * ARGUMENTS: None.
-   * RETURNS:
-   *   (vec<Type>) normalized vector.
    */
   __device__ d_vec Normalizing(void) const {
     const float l(sqrt(x * x + y * y + z * z));
@@ -176,11 +120,6 @@ public:
   } /* End of 'Normalizing' function */
 
   /* Convert vector to dword number for color (abgr format) function.
-   * ARGUMENTS:
-   *   - color range:
-   *       const int N;
-   * RETURNS:
-   *   (DWORD) - color from vector;
    */
   __device__ DWORD D_cast(int N = 255) const {
     return (int(z * N) << 0) | (int(y * N) << 8) | (int(x * N) << 16) |
@@ -194,9 +133,6 @@ class d_matr3 {
 
 public:
   /* Class constructor function.
-   * ARGUMENTS:
-   *   - matrix components:
-   *       const Type A00, A01, A02, A10, A11, A12, A20, A21, A22;
    */
   __device__ d_matr3(const float A00, const float A01, const float A02,
                      const float A10, const float A11, const float A12,
@@ -205,11 +141,6 @@ public:
   } /* End of 'd_matr3' function */
 
   /* Calculate determinant on 3x3 matrix function.
-   * ARGUMENTS:
-   *   - matrix components:
-   *       const Type A00, A01, A10, A11;
-   * RETURNS:
-   *   (float) - matrix determinant.
    */
   __device__ static float MatrDeterm2x2(const float A00, const float A01,
                                         const float A10, const float A11) {
@@ -384,11 +315,6 @@ static __device__ d_vec RGB2HSV(const DWORD D) {
 } /* End of 'RGB2HSV' function */
 
 /* Convert RGB-color to XYZ-color function.
- * ARGUMENTS:
- *   - rgb-color in dword:
- *       d_vec D;
- * RETURNS:
- *   (d_vec) - XYZ-color.
  */
 static __device__ d_vec RGB2XYZ(const d_vec D) {
   d_matr3 M(0.4124, 0.3576, 0.1805, 0.2126, 0.7152, 0.0722, 0.0193, 0.1192,
@@ -397,11 +323,6 @@ static __device__ d_vec RGB2XYZ(const d_vec D) {
 } /* End of 'RGB2XYZ' function */
 
 /* For XYZ to LAB convertion function.
- * ARGUMENTS:
- *   - function argument:
- *       float x;
- * RETURNS:
- *   (float) - function result.
  */
 static __device__ float f(const float x) {
   const float c = 6.0 / 29.0;
@@ -412,11 +333,6 @@ static __device__ float f(const float x) {
 } /* End of 'f' function */
 
 /* Convert RGB-color to LAB-color function.
- * ARGUMENTS:
- *   - rgb-color in dword:
- *       d_vec D;
- * RETURNS:
- *   (d_vec) - LAB-color.
  */
 static __device__ d_vec RGB2LAB(const d_vec D, const d_vec white_point) {
   float L = 0, a = 0, b = 0;
@@ -428,11 +344,6 @@ static __device__ d_vec RGB2LAB(const d_vec D, const d_vec white_point) {
 } /* End of 'RGB2LAB' function */
 
 /* Convert RGB-color to LAB-color function.
- * ARGUMENTS:
- *   - rgb-color in dword:
- *       DWORD D;
- * RETURNS:
- *   (d_vec) - LAB-color.
  */
 static __device__ d_vec RGB2LAB(const DWORD D, const d_vec white_point) {
   d_vec C = V_cast(D);
